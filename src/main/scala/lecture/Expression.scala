@@ -43,5 +43,5 @@ object Expression extends App {
   val doubled = numbers.map(_ * 2) // List(2, 4, 6, 8, 10)
   println(doubled)
 
-  println(println(123))
+  println(println(123)) // return ()
 }
