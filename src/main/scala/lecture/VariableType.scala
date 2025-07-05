@@ -43,5 +43,4 @@ object VariableType extends App {
 
   val stringVal: String = "Hello, Scala"
   println(stringVal)
-
 }
