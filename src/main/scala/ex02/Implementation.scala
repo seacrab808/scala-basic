@@ -30,7 +30,6 @@ object Implementation extends Template {
         freeIds(e1) ++ freeIds(e2)
       case Val(x, e1, e2) =>
         freeIds(e1) ++ (freeIds(e2) - x)
-        // 여기에 왜 mul은 없는지 ? 그리고 val 식 왜 이런지 ? 이건 init이랑 body인건지 인자가 ?
     }
   }
 
@@ -46,21 +45,21 @@ object Implementation extends Template {
         Set(x) ++ bindingIds(e1) ++ bindingIds(e2)
     }
   }
-  // 얘도 왜 Mul은 없는지 ? val은 왜 이모양인지?
 
-  def boundIds(expr: Expr): Set[String] = {
-    expr match {
-      case Num(_) => Set()
-      case Id(_) => Set()
-      case Add(e1, e2) =>
-        boundIds(e1) ++ boundIds(e2)
-      case Mul(e1, e2) =>
-        boundIds(e1) ++ boundIds(e2)
-      case Val(x, e1, e2) =>
-        Set(x) ++ boundIds(e1) ++ boundIds(e2)
-    }
+  def boundIds(expr: Expr): Set[String] = expr match {
+    case Num(_) => Set()
+    case Id(_) => Set()
+    case Add(e1, e2) =>
+      boundIds(e1) ++ boundIds(e2)
+    case Mul(e1, e2) =>
+      boundIds(e1) ++ boundIds(e2)
+    case Val(x, e1, e2) =>
+      val initBound = boundIds(e1)
+      val bodyBound = boundIds(e2)
+      val bodyFree = freeIds(e2)
+      val thisBound = if (bodyFree.contains(x)) Set(x) else Set()
+      initBound ++ bodyBound ++ thisBound
   }
-  // 왜 bindingIds랑 같은지?
 
   def shadowedIds(expr: Expr): Set[String] = {
     def helper(expr: Expr, env: Set[String]): Set[String] = {
